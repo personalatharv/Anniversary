@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>A Message for You 🤍</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --rose: #c0395a;
+      --rose-light: #e8aab8;
+      --ink: #3a1a22;
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background: linear-gradient(135deg, #1a0a10 0%, #3d1525 50%, #1a0a10 100%);
+      font-family: 'Lato', sans-serif;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+
+    .particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .particle  { position: absolute; opacity: 0; animation: rise linear infinite; }
+    @keyframes rise {
+      0%   { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+      10%  { opacity: .7; }
+      90%  { opacity: .4; }
+      100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+    }
+
+    .shell {
+      position: relative; z-index: 10;
+      display: flex; flex-direction: column;
+      align-items: center; width: 100%;
+      gap: 12px; padding: 12px 0 8px;
+    }
+
+    .viewport {
+      width: min(92vw, 370px);
+      height: min(72vh, 560px);
+      overflow: hidden;
+      border-radius: 18px;
+      box-shadow: 0 20px 70px #000000aa;
+    }
+
+    .track {
+      display: flex; height: 100%;
+      transition: transform 0.45s cubic-bezier(0.77, 0, 0.175, 1);
+      will-change: transform;
+    }
+
+    .card {
+      flex: none;
+      width: min(92vw, 370px);
+      height: 100%;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+
+    .card.cover {
+      background: linear-gradient(155deg, #2b0d1a 0%, #6b2040 55%, #c0395a 100%);
+      justify-content: space-between;
+      padding: 1.6em 1.5em 1.2em;
+      position: relative;
+    }
+    .card.cover::before {
+      content: ''; position: absolute; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");
+    }
+    .card.a { background: linear-gradient(160deg, #fff8f5 65%, #f5dde4 100%); }
+    .card.b { background: linear-gradient(160deg, #fff8f5 65%, #eee0ea 100%); }
+    .card.end {
+      background: linear-gradient(155deg, #2b0d1a 0%, #6b2040 100%);
+      justify-content: center; align-items: center; text-align: center;
+      padding: 1.6em 1.5em;
+    }
+
+    .cover-deco  { font-size: 2.8rem; position: relative; }
+    .cover-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 8.5vw, 2.8rem);
+      font-weight: 600; color: #fff;
+      text-shadow: 0 2px 20px #00000090;
+      line-height: 1.1; position: relative;
+    }
+    .cover-sub {
+      color: rgba(255,255,255,.65);
+      font-size: clamp(.7rem, 2.8vw, .88rem);
+      letter-spacing: .12em; font-weight: 300;
+      margin-top: .45em; position: relative;
+    }
+    .cover-hint { color: rgba(255,255,255,.3); font-size: .62rem; letter-spacing: .08em; position: relative; }
+
+    .text-zone {
+      flex: 1; display: flex; flex-direction: column;
+      padding: 1.2em 1.4em 0.6em;
+      gap: 0.4em; overflow: hidden; min-height: 0;
+    }
+    h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1rem, 4.2vw, 1.3rem);
+      font-weight: 600; color: var(--rose);
+      line-height: 1.2; flex: none;
+    }
+    .divider {
+      width: 32px; height: 1px; flex: none;
+      background: linear-gradient(to right, transparent, var(--rose), transparent);
+    }
+    .body-text {
+      font-size: clamp(.68rem, 2.8vw, .84rem);
+      line-height: 1.7; color: #4a2535;
+      overflow-y: auto; flex: 1;
+      white-space: pre-line;
+      -webkit-overflow-scrolling: touch;
+    }
+    .body-text::-webkit-scrollbar { width: 3px; }
+    .body-text::-webkit-scrollbar-thumb { background: var(--rose-light); border-radius: 2px; }
+    .pg-num {
+      font-size: .58rem; color: var(--rose-light);
+      letter-spacing: .1em; text-align: right;
+      flex: none; padding-top: .2em;
+    }
+
+    /* ── Photo strip ── */
+    .photo-strip {
+      flex: none;
+      display: flex; gap: 6px;
+      padding: 6px 10px 10px;
+      height: 120px;
+      background: rgba(0,0,0,0.03);
+      border-top: 1px solid rgba(192,57,90,0.12);
+    }
+
+    .photo-slot {
+      flex: 1; border-radius: 10px; overflow: hidden;
+      position: relative;
+    }
+
+    /* The actual image — replace src to swap photo */
+    .photo-slot img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      border-radius: 10px;
+    }
+
+    /* small label shown on hover/long-press to hint the src attribute */
+    .photo-slot::after {
+      content: attr(data-label);
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: rgba(0,0,0,0.45);
+      color: rgba(255,255,255,0.85);
+      font-size: 0.5rem; text-align: center;
+      padding: 2px 0;
+      letter-spacing: 0.05em;
+      pointer-events: none;
+    }
+
+    .end-heart  { font-size: 2.6rem; margin: .4em 0; }
+    .end-title  {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.3rem, 5.5vw, 1.8rem);
+      font-style: italic; color: var(--rose-light);
+    }
+    .end-credit { color: rgba(255,255,255,.4); font-size: .7rem; margin-top: .7em; line-height: 1.7; }
+
+    .nav {
+      position: relative; z-index: 20;
+      display: flex; align-items: center; gap: 1.4rem;
+    }
+    .nav button {
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.22);
+      color: #fff; width: 48px; height: 48px;
+      border-radius: 50%; font-size: 1.4rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background .15s, transform .1s;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    .nav button:active { background: rgba(192,57,90,.5); transform: scale(.9); }
+    .nav button:disabled { opacity: .18; pointer-events: none; }
+    .page-indicator {
+      color: rgba(255,255,255,.55); font-size: .72rem;
+      letter-spacing: .1em; min-width: 64px; text-align: center;
+    }
+
+    .dots { display: flex; gap: 5px; position: relative; z-index: 20; }
+    .dot  {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: rgba(255,255,255,.18);
+      transition: background .3s, transform .3s;
+    }
+    .dot.active { background: var(--rose-light); transform: scale(1.5); }
+  </style>
+</head>
+<body>
+
+<audio id="bg-music" loop>
+  <source src="Amit Trivedi - Jadu Salona.mp3" type="audio/mpeg">
+</audio>
+
+<div class="particles" id="particles"></div>
+
+<div class="shell">
+  <div class="viewport" id="viewport">
+    <div class="track" id="track">
+
+      <!-- ═══════════════════════════════════════
+           COVER PAGE
+      ═══════════════════════════════════════ -->
+      <div class="card cover">
+        <div class="cover-deco" style="position:relative;">🤍</div>
+        <div style="position:relative;">
+          <div class="cover-title">Happy Anniversary<br/>Aarvi</div>
+          <div class="cover-sub">23rd March 2026 · Special Edition</div>
+        </div>
+        <div class="cover-hint" style="position:relative;">Swipe left or tap › to begin</div>
+      </div>
+
+      <!-- ═══════════════════════════════════════
+           PAGE 1
+           PHOTOS: Replace p1_photo1.jpg & p1_photo2.jpg with your image filenames
+      ═══════════════════════════════════════ -->
+      <div class="card a">
+        <div class="text-zone">
+          <h2>A Special Beginning ❤️</h2>
+          <div class="divider"></div>
+          <div class="body-text">Some people come into our lives unexpectedly, yet leave a lasting impact. You are one of those rare souls who make every moment feel a little more special.
+
+From the very first conversation, something about you stood out—your kindness, your charm, and the effortless way you make the world around you brighter.
+
+This isn't just a collection of words, it's a small way of showing how much you mean to me. A reminder that you are appreciated, admired, and truly special.
+
+So, here's to us our conversations, our connection, and the beautiful moments yet to come. 💖
+</div>
+          <div class="pg-num">1</div>
+        </div>
+        <div class="photo-strip">
+          <div class="photo-slot" data-label="My cutiepie 💔">
+            <img src="IMG_5278.JPEG" alt="Photo 1"/>
+          </div>
+          <div class="photo-slot" data-label="Diva 😝">
+            <img src="72A6F3A5-464C-45A6-AA8F-AF61BAEF93A0.JPEG" alt="Photo 2"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════
+           PAGE 2
+           PHOTOS: Replace p2_photo1.jpg & p2_photo2.jpg
+      ═══════════════════════════════════════ -->
+      <div class="card b">
+        <div class="text-zone">
+          <h2>From Strangers to Something Special</h2>
+          <div class="divider"></div>
+          <div class="body-text">It's incredible to think how, just a few years ago, I didn't even know you. Meeting you was a moment of fate that I'll always be grateful for.
+
+I was very excited to send you request when you gave me your ID, I was really confused LIKE MAN HOW TO START A CONVO WITH MY CRUSH!!!, what we'd talk about, or what kind of person you'd be. But now, after spending time with you, I've realized something truly special.
+
+You're absolutely perfect 💖
+
+Your words, the way you match my vibe, and the way you make me smile have already made a place in my heart. I never expected to meet someone like you, but now, I can't imagine not having you in my life.
+
+Maybe it was destiny, or maybe it was just my luck but whatever it was, I'm glad it brought me to you :) </div>
+          <div class="pg-num">2</div>
+        </div>
+        <div class="photo-strip">
+          <div class="photo-slot" data-label="Us one day">
+            <img src="1185F058-56C1-4653-BAF9-5DBE65EF0856.JPEG" alt="Photo 1"/>
+          </div>
+          <div class="photo-slot" data-label="Cutu baby">
+            <img src="B115647D-DC6B-4EE6-B799-9A3BCDDE3A85.jpg" alt="Photo 2"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════
+           PAGE 3
+           PHOTOS: Replace p3_photo1.jpg & p3_photo2.jpg
+      ═══════════════════════════════════════ -->
+      <div class="card a">
+        <div class="text-zone">
+          <h2>The Magic of You </h2>
+          <div class="divider"></div>
+          <div class="body-text">There's a charm about you, a beauty that words can hardly capture. It's in the sparkle of your eyes, the warmth of your smile, and the way you make every moment special.
+
+Were you crafted as a masterpiece? (ofc you were 😝) It's as if the universe took its time, carefully shaping someone as wonderful as you, just to make the world a little brighter.
+
+Your presence feels like a soft melody soothing yet unforgettable. The way you carry yourself, the kindness in your heart, and the purity in your soul make you even more special.
+
+It's not just about how beautiful you look, it's about how beautiful you truly are.
+
+Every time I see you, I'm reminded that some things in life are simply magical, and you, without a doubt, are one of them.</div>
+          <div class="pg-num">3</div>
+        </div>
+        <div class="photo-strip">
+          <div class="photo-slot" data-label="We're made for each other">
+            <img src="D97CF1E6-9C26-44B5-883A-A780486250E1.jpg" alt="Photo 1"/>
+          </div>
+          <div class="photo-slot" data-label="You if you were a flower">
+            <img src="IMG_1893.JPEG" alt="Photo 2"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════
+           PAGE 4
+           PHOTOS: Replace p4_photo1.jpg & p4_photo2.jpg
+      ═══════════════════════════════════════ -->
+      <div class="card b">
+        <div class="text-zone">
+          <h2>The Space Between Us </h2>
+          <div class="divider"></div>
+          <div class="body-text">It has been a year since we started dating, yet it feels like decades have passed. Every single day without you feels incomplete, like a song missing its melody.
+
+Whenever I see couples together walking hand in hand, laughing, sharing little moments I can't help but think of you. I picture us in those moments, and I wish more than anything that distance wasn't keeping us apart.
+
+I miss your voice, your laughter, and the way you make everything feel right. No matter how far we are, my heart is always with you.
+
+Until then, just know that I love you, I miss you, and I'm always thinking of you.
+
+Btw we are meeting very soon ✌🏻✌🏻 
+</div>
+          <div class="pg-num">4</div>
+        </div>
+        <div class="photo-strip">
+          <div class="photo-slot" data-label="Miss holding your hand 💔">
+            <img src="ED445F72-5D1C-4931-9959-44605F7AA94D.jpg" alt="Photo 1"/>
+          </div>
+          <div class="photo-slot" data-label="Browine yum 😝">
+            <img src="IMG_1286.JPEG" alt="Photo 2"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════
+           PAGE 5
+           PHOTOS: Replace p5_photo1.jpg & p5_photo2.jpg
+      ═══════════════════════════════════════ -->
+      <div class="card a">
+        <div class="text-zone">
+          <h2>The Best Part of My Day</h2>
+          <div class="divider"></div>
+          <div class="body-text">Talking to you has always been one of the highlights of my day. Every time I see a notification I hope its from you, I can't help but smile, it's like a little spark of happiness.
+
+No matter how my day is going, our conversations make everything feel lighter.
+
+You have a way of making the simplest moments special.
+
+It's not just about how beautiful you are, it's the warmth, kindness, and charm in the way you talk. Talking to you is like a magic that makes me feel at ease, and your presence alone makes me the happiest person alive.
+
+I never knew a conversation could mean so much, but with you, it does. </div>
+          <div class="pg-num">5</div>
+        </div>
+        <div class="photo-strip">
+          <div class="photo-slot" data-label="Holding hands 💔">
+            <img src="IMG_3083.JPEG" alt="Photo 1"/>
+          </div>
+          <div class="photo-slot" data-label="You're my sunshine">
+            <img src="IMG_1288.JPEG" alt="Photo 2"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════
+           PAGE 6
+           PHOTOS: Replace p6_photo1.jpg & p6_photo2.jpg
+      ═══════════════════════════════════════ -->
+      <div class="card b">
+        <div class="text-zone">
+          <h2>Memories in My Heart</h2>
+          <div class="divider"></div>
+          <div class="body-text">There are moments in life that become etched in the heart forever, ours are those moments. I find myself drifting back to the dates when we were walking hand in hand, lost in our little world.
+
+I do remember every single day that we spent together even those when we were not dating ;) . The way time just slipped away as we sat there, talking about everything and nothing?
+
+The day you said yes that day was THE BEST DAY of my entire life , and in that moment, I felt like the luckiest person alive.
+
+The memory that still gives me butterflies is the first time you held my hand. That simple touch sent a rush through me I had never experienced before.
+
+Even now, these memories keep me warm. I can't wait for the day we make new ones together again. 🌸</div>
+          <div class="pg-num">6</div>
+        </div>
+        <div class="photo-strip">
+          <div class="photo-slot" data-label="Asli flower toh aap ho">
+            <img src="W.JPEG" alt="Photo 1"/>
+          </div>
+          <div class="photo-slot" data-label="Pretty Princess">
+            <img src="5064718A-A798-4F2B-88D3-97E37BCEEBEA.JPEG" alt="Photo 2"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════
+           PAGE 7
+           PHOTOS: Replace p7_photo1.jpg & p7_photo2.jpg
+      ═══════════════════════════════════════ -->
+      <div class="card a">
+        <div class="text-zone">
+          <h2>I'll be always Here for You </h2>
+          <div class="divider"></div>
+          <div class="body-text">You are an inspiration, and I want you to know that I'll always be here for you, no matter what. If you ever need anything someone to listen, someone to support you, or just someone to make you smile, I'm just a message away.
+
+My time is yours whenever you need it.
+
+Life can be unpredictable, but I hope you never feel alone. Whether it's a good day or a tough one, I'll always be here to cheer you on, to remind you how amazing you are.
+
+You deserve nothing but happiness, and if I can be a small part of that, I'd be honored. </div>
+          <div class="pg-num">7</div>
+        </div>
+        <div class="photo-strip">
+          <div class="photo-slot" data-label="Holding hands and walking together 💔">
+            <img src="IMG_3083.gif" alt="Photo 1"/>
+          </div>
+          <div class="photo-slot" data-label="My baby">
+            <img src="1A45E192-83AD-48CA-9DB9-13B20EAA01BC.JPEG" alt="Photo 2"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════
+           PAGE 8
+           PHOTOS: Replace p8_photo1.jpg & p8_photo2.jpg
+      ═══════════════════════════════════════ -->
+      <div class="card b">
+        <div class="text-zone">
+          <h2>The Beauty of You </h2>
+          <div class="divider"></div>
+          <div class="body-text">Can we take a moment to appreciate how effortlessly stunning you look in anything you wear? It's not just the clothes it's the confidence, the grace, and the way you carry yourself that make you truly unforgettable.
+
+You look absolutely breathtaking in traditional dresses. I'm a huge fan of your traditional outfits 😝✌🏻 . And your hair? Like man kahan se laaye ho itne pyaare baal.
+
+You have a presence that turns heads and a charm that rules my heart. You bring positivity, and your energy is precious. Everytime you go on a trip I always feel that positive vibe going away 💔.
+
+You are not just beautiful you are extraordinary. And I feel incredibly lucky to have you in my life. 💖</div>
+          <div class="pg-num">8</div>
+        </div>
+        <div class="photo-strip">
+          <div class="photo-slot" data-label="Love your hair man">
+            <img src="20224d71591848cd9ccce34809d71350-ezgif.com-crop (1).gif" alt="Photo 1"/>
+          </div>
+          <div class="photo-slot" data-label="Us looking cute together">
+            <img src="IMG_9091.JPEG" alt="Photo 2"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════
+           PAGE 9
+           PHOTOS: Replace p9_photo1.jpg & p9_photo2.jpg
+      ═══════════════════════════════════════ -->
+      <div class="card a">
+        <div class="text-zone">
+          <h2>Grateful for You ❤</h2>
+          <div class="divider"></div>
+          <div class="body-text">I just wanted to take a moment to let you know how much I appreciate you. From the very start, you've been someone truly special someone I admire more than words can express.
+
+Meeting you, even for a short time, has been a gift.
+
+Your kindness, your presence, and the way you make every conversation feel meaningful mean more to me than you know. I'm grateful that our paths crossed, and no matter what the future holds, I'll always be thankful for you.
+
+Some people leave a mark on our hearts without even trying and you are one of them. </div>
+          <div class="pg-num">9</div>
+        </div>
+        <div class="photo-strip">
+          <div class="photo-slot" data-label="Hug 🫂🫂">
+            <img src="Screenshot 2026-03-22 182827.png" alt="Photo 1"/>
+          </div>
+          <div class="photo-slot" data-label="I love this sticker">
+            <img src="538275956_17969312678938724_7664930027359478426_n.png" alt="Photo 2"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════
+           PAGE 10
+           PHOTOS: Replace p10_photo1.jpg & p10_photo2.jpg
+      ═══════════════════════════════════════ -->
+      <div class="card b">
+        <div class="text-zone">
+          <h2>Will You Be Mine Forever? </h2>
+          <div class="divider"></div>
+          <div class="body-text">From the moment we started talking, you've been on my mind in the best way possible. Your kindness, your beauty, your energy everything about you feels so special to me.
+
+You make my world brighter, my days better, and my heart a little fuller.
+
+I don't know what the future holds, but I do know one thing I'd love to have you by my side always. So, here's my question, straight from the heart
+
+Will you be mine forever and be by my side always, without getting tired of me? </div>
+          <div class="pg-num">10</div>
+        </div>
+        <div class="photo-strip">
+          <div class="photo-slot" data-label="So cute together 🎀">
+            <img src="Video.gif" alt="Photo 1"/>
+          </div>
+          <div class="photo-slot" data-label="Miss your hugs 💔">
+            <img src="C24AE795-5FD9-40EB-9F37-447C73AA94DF.JPEG" alt="Photo 2"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- END CARD -->
+      <div class="card end">
+        <div class="end-heart">🎀🎀🎀</div>
+        <div class="end-title">For my Princess</div>
+        <div class="end-credit">With love<br/>Atharv</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="nav">
+    <button id="prevBtn" disabled>‹</button>
+    <div class="page-indicator" id="pageInd">Cover</div>
+    <button id="nextBtn">›</button>
+  </div>
+  <div class="dots" id="dots"></div>
+</div>
+
+<script>
+  const viewport  = document.getElementById('viewport');
+  const track     = document.getElementById('track');
+  const allCards  = Array.from(track.querySelectorAll('.card'));
+  const total     = allCards.length;
+  const labels    = ['Cover', ...Array.from({length:10}, (_,i) => `Page ${i+1}`), 'The End'];
+  let current     = 0;
+
+  const dotsEl = document.getElementById('dots');
+  allCards.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    dotsEl.appendChild(d);
+  });
+  const dotNodes = Array.from(dotsEl.querySelectorAll('.dot'));
+
+  function cardW() { return viewport.getBoundingClientRect().width; }
+
+  function goTo(n) {
+    current = Math.max(0, Math.min(n, total - 1));
+    track.style.transform = `translateX(-${current * cardW()}px)`;
+    document.getElementById('prevBtn').disabled = current === 0;
+    document.getElementById('nextBtn').disabled = current === total - 1;
+    document.getElementById('pageInd').textContent = labels[current] || '';
+    dotNodes.forEach((d, i) => d.classList.toggle('active', i === current));
+  }
+
+  document.getElementById('nextBtn').addEventListener('click', () => goTo(current + 1));
+  document.getElementById('prevBtn').addEventListener('click', () => goTo(current - 1));
+
+  let t0x = 0, t0y = 0, didSwipe = false;
+  viewport.addEventListener('touchstart', e => {
+    t0x = e.touches[0].clientX; t0y = e.touches[0].clientY; didSwipe = false;
+  }, { passive: true });
+  viewport.addEventListener('touchmove', e => {
+    const dx = e.touches[0].clientX - t0x, dy = e.touches[0].clientY - t0y;
+    if (!didSwipe && Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 8) didSwipe = true;
+  }, { passive: true });
+  viewport.addEventListener('touchend', e => {
+    if (!didSwipe) return;
+    const dx = e.changedTouches[0].clientX - t0x;
+    if (Math.abs(dx) > 40) dx < 0 ? goTo(current + 1) : goTo(current - 1);
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') goTo(current + 1);
+    if (e.key === 'ArrowLeft')  goTo(current - 1);
+  });
+  window.addEventListener('resize', () => goTo(current));
+
+  // Particles
+  const emojiSet = ['❤️','💖','💕','🌸','✨','💗','🌹','💓','🥰'];
+  const pc = document.getElementById('particles');
+  for (let i = 0; i < 14; i++) {
+    const el = document.createElement('div');
+    el.className = 'particle';
+    el.textContent = emojiSet[i % emojiSet.length];
+    el.style.left = (Math.random() * 95) + '%';
+    el.style.animationDuration = (9 + Math.random() * 10) + 's';
+    el.style.animationDelay   = (Math.random() * 12) + 's';
+    el.style.fontSize = (0.8 + Math.random() * 1.1) + 'rem';
+    pc.appendChild(el);
+  }
+
+  goTo(0);
+
+const bgMusic = document.getElementById("bg-music");
+
+  document.addEventListener("click", () => {
+    if (bgMusic.paused) {
+      bgMusic.volume = 0;
+      bgMusic.play();
+
+      let vol = 0;
+      const fade = setInterval(() => {
+        if (vol < 0.3) {
+          vol += 0.02;
+          bgMusic.volume = vol;
+        } else {
+          clearInterval(fade);
+        }
+      }, 100);
+    }
+  }, { once: true });
+
+</script>
+</body>
+</html>
