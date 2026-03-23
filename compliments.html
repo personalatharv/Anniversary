@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jar of Compliments 💌</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --rose: #c0395a;
+  --rose-light: #e8aab8;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Lato', sans-serif;
+  background: linear-gradient(135deg, #1a0a10 0%, #3d1525 50%, #1a0a10 100%);
+  color: white;
+  padding: 10px;
+}
+
+.particles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  opacity: 0;
+  animation: rise linear infinite;
+}
+
+@keyframes rise {
+  0% { transform: translateY(100vh); opacity: 0; }
+  10% { opacity: .7; }
+  90% { opacity: .4; }
+  100% { transform: translateY(-10vh); opacity: 0; }
+}
+
+.container {
+  position: relative;
+  z-index: 10;
+  width: 90vw;
+  max-width: 360px;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 25px;
+  text-align: center;
+  box-shadow: 0 20px 60px #000000aa;
+}
+
+h1 {
+  font-family: 'Cormorant Garamond', serif;
+  color: var(--rose-light);
+}
+
+.jar {
+  font-size: 90px;
+  cursor: pointer;
+  margin-top: 20px;
+  position: relative;
+}
+
+@keyframes shake {
+  0% { transform: rotate(0); }
+  25% { transform: rotate(5deg); }
+  50% { transform: rotate(-5deg); }
+  75% { transform: rotate(3deg); }
+  100% { transform: rotate(0); }
+}
+
+.shake {
+  animation: shake 0.4s ease;
+}
+
+.paper {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  transform: translate(-50%, 0);
+  background: #fff8dc;
+  color: #3a1a22;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-size: 14px;
+  width: 220px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  opacity: 0;
+}
+
+@keyframes popOut {
+  0% { transform: translate(-50%, 20px) scale(0.5); opacity: 0; }
+  60% { transform: translate(-50%, -80px) scale(1.1); opacity: 1; }
+  100% { transform: translate(-50%, -60px) scale(1); opacity: 1; }
+}
+
+.show {
+  animation: popOut 0.7s ease forwards;
+}
+
+.back-btn {
+  margin-top: 12px;
+  font-size: 0.7rem;
+  opacity: 0.6;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<audio id="bgMusic" loop>
+  <source src="Patang (Official Visualizer)  Abeer Chopra  New Hindi Song  UR Debut.mp3" type="audio/mpeg">
+</audio>
+
+<div class="particles" id="particles"></div>
+
+<div class="container">
+  <h1>Jar of Compliments 💌</h1>
+  <p>Tap the jar ❤️</p>
+
+  <div id="jar" class="jar" onclick="getCompliment()">
+    🫙
+    <div id="paper" class="paper"></div>
+  </div>
+
+  <button class="back-btn" onclick="goBack()">← Back</button>
+</div>
+
+<script>
+// particles
+const emojis = ['❤️','💖','✨','🌸','💕'];
+const pc = document.getElementById('particles');
+for (let i = 0; i < 12; i++) {
+  const el = document.createElement('div');
+  el.className = 'particle';
+  el.textContent = emojis[i % emojis.length];
+  el.style.left = Math.random() * 100 + '%';
+  el.style.animationDuration = (8 + Math.random() * 10) + 's';
+  el.style.animationDelay = Math.random() * 10 + 's';
+  pc.appendChild(el);
+}
+
+// autoplay + fade
+const bgMusic = document.getElementById("bgMusic");
+bgMusic.volume = 0;
+
+window.addEventListener("load", () => {
+  bgMusic.play().then(() => fadeIn()).catch(() => {});
+});
+
+document.addEventListener("click", () => {
+  if (bgMusic.paused) {
+    bgMusic.play();
+    fadeIn();
+  }
+}, { once: true });
+
+function fadeIn() {
+  let vol = 0;
+  const fade = setInterval(() => {
+    if (vol < 0.3) {
+      vol += 0.02;
+      bgMusic.volume = vol;
+    } else {
+      clearInterval(fade);
+    }
+  }, 100);
+}
+
+// compliments
+let compliments = [
+"You make even boring days feel worth it",
+"Your smile genuinely fixes my mood",
+"I like how you don’t even try and still stand out",
+"You make conversations feel effortless",
+"You’re the calm I didn’t know I needed",
+"You somehow make chaos feel fun",
+"I love how real you are with me",
+"You make distance feel less annoying",
+"You’re my favorite part of the day",
+"I don’t think you realize how much you matter to me",
+"The way you laugh randomly is my favorite thing",
+"You make silence feel comfortable, not awkward",
+"You’re the only person I don’t get tired of",
+"You make me want to be better without forcing it",
+"You’re way more special than you think",
+"I like how your mind works, it’s different",
+"You’re the reason I check my phone like an idiot",
+"You make everything feel lighter",
+"You’re my safe place without even trying",
+"You make me forget stress exists sometimes",
+"You’re effortlessly beautiful, it’s unfair",
+"You make normal moments feel important",
+"I like how you notice small things",
+"You’re the best kind of distraction",
+"You make me feel understood",
+"You’re the one person I can be 100% myself with",
+"You make me laugh when I don’t even want to",
+"You’re the best decision I didn’t overthink",
+"You make my life less boring",
+"You’re my favorite habit",
+"You have this way of making everything feel okay",
+"You’re stronger than you think",
+"You make me feel lucky without even trying",
+"You’re the kind of person people don’t forget",
+"You make simple things feel special",
+"You’re the reason I smile at random times",
+"You make me look forward to tomorrow",
+"You’re my peace and my chaos at the same time",
+"You’re the best part of my routine",
+"You make everything feel a little more meaningful",
+"You’re not perfect, but you’re perfect for me",
+"You make me feel at home even from far away",
+"You’re the one I want to tell everything to",
+"You make my world feel bigger and better",
+"You’re the highlight of my day, every day",
+"You make distance feel temporary",
+"You’re the only notification I actually wait for",
+"You make me believe in us more every day",
+"You’re everything I didn’t know I needed",
+"If I had to choose again, it would still be you"
+];
+
+let remaining = [...compliments];
+
+function getCompliment() {
+  const paper = document.getElementById("paper");
+  const jar = document.getElementById("jar");
+
+  if (remaining.length === 0) {
+    paper.innerText = "You unlocked all compliments ❤️";
+  } else {
+    const i = Math.floor(Math.random() * remaining.length);
+    paper.innerText = remaining[i];
+    remaining.splice(i, 1);
+  }
+
+  paper.classList.remove("show");
+  jar.classList.remove("shake");
+  void paper.offsetWidth;
+
+  jar.classList.add("shake");
+  paper.classList.add("show");
+}
+
+function goBack() {
+  window.location.href = "index.html";
+}
+</script>
+
+</body>
+</html>
