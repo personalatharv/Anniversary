@@ -32,6 +32,24 @@
       100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
     }
 
+
+    .final-btn {
+      margin-top: 18px;
+      padding: 10px 18px;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: #fff;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .final-btn:hover {
+      background: rgba(192,57,90,0.6);
+      transform: scale(1.05);
+    }
     .shell {
       position: relative; z-index: 10;
       display: flex; flex-direction: column;
@@ -232,7 +250,7 @@
           <div class="divider"></div>
           <div class="body-text">Some people come into our lives unexpectedly, yet leave a lasting impact. You are one of those rare souls who make every moment feel a little more special.
 
-From the very first conversation, something about you stood out your kindness, your charm, and the effortless way you make the world around you brighter.
+From the very first conversation, something about you stood out—your kindness, your charm, and the effortless way you make the world around you brighter.
 
 This isn't just a collection of words, it's a small way of showing how much you mean to me. A reminder that you are appreciated, admired, and truly special.
 
@@ -509,6 +527,9 @@ Will you be mine forever and be by my side always, without getting tired of me? 
         <div class="end-heart">🎀🎀🎀</div>
         <div class="end-title">For my Princess</div>
         <div class="end-credit">With love<br/>Atharv</div>
+        <button class="final-btn" onclick="goToCompliments()">
+          Open Your Surprise 💌
+        </button>
       </div>
 
     </div>
@@ -606,7 +627,10 @@ const bgMusic = document.getElementById("bg-music");
       }, 100);
     }
   }, { once: true });
-
+  
+  function goToCompliments() {
+    window.location.href = "compliments.html";
+  }
 </script>
 </body>
 </html>
